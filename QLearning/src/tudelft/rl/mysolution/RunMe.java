@@ -27,12 +27,20 @@ public class RunMe {
 		QLearning learn=new MyQLearning();
 		
 		boolean stop=false;
-		
+		int actions = 0;
 		//keep learning until you decide to stop
 		while (!stop) {
+
 			//TODO implement the action selection and learning cycle
-			
-			//TODO figure out a stopping criterion			
+			Action selectedAction = selection.getEGreedyAction(robot, maze, learn, 0.1);
+			State stateBeforeAction = robot.getState(maze);
+			State stateAfterAction = robot.doAction(selectedAction, maze);
+			learn.updateQ(stateBeforeAction, selectedAction, maze.getR(stateAfterAction), stateAfterAction,
+					maze.getValidActions(robot), 0.1, 0.1);
+			//TODO figure out a stopping criterion
+			if(maze.getState(9, 9).equals(stateAfterAction)) {
+				robot.reset();
+			}
 		}
 
 	}
