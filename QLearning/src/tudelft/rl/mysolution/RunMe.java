@@ -1,12 +1,14 @@
 package tudelft.rl.mysolution;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import tudelft.rl.*;
 
 public class RunMe {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		
 		//load the maze
 		//TODO replace this with the location to your maze on your file system
@@ -27,21 +29,32 @@ public class RunMe {
 		QLearning learn=new MyQLearning();
 		
 		boolean stop=false;
-		int actions = 0;
-		//keep learning until you decide to stop
-		while (!stop) {
 
-			//TODO implement the action selection and learning cycle
-			Action selectedAction = selection.getEGreedyAction(robot, maze, learn, 0.1);
-			State stateBeforeAction = robot.getState(maze);
-			State stateAfterAction = robot.doAction(selectedAction, maze);
-			learn.updateQ(stateBeforeAction, selectedAction, maze.getR(stateAfterAction), stateAfterAction,
-					maze.getValidActions(robot), 0.1, 0.1);
-			//TODO figure out a stopping criterion
-			if(maze.getState(9, 9).equals(stateAfterAction)) {
-				robot.reset();
+
+
+
+			int numberOfStepsTaken = 0;
+			//keep learning until you decide to stop
+			while (numberOfStepsTaken <= 30000) {
+
+				//TODO implement the action selection and learning cycle
+				Action selectedAction = selection.getEGreedyAction(robot, maze, learn, 0.1);
+				State stateBeforeAction = robot.getState(maze);
+				State stateAfterAction = robot.doAction(selectedAction, maze);
+				learn.updateQ(stateBeforeAction, selectedAction, maze.getR(stateAfterAction), stateAfterAction,
+						maze.getValidActions(robot), 0.7, 0.9);
+				//TODO figure out a stopping criterion
+				if(maze.getState(9, 9).equals(stateAfterAction)) {
+					int numberOfSteps = robot.reset();
+					System.out.println("this # op steps" + numberOfSteps);
+					numberOfStepsTaken += numberOfSteps;
+				}
+
 			}
-		}
+
+
+
+
 
 	}
 
