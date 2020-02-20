@@ -29,10 +29,13 @@ public class Agent {
 		return getState(m);
 	}
 	
-	public void reset() {
+	public int reset() {
 		System.out.println(nrOfActionsSinceReset);
 		x=startX;
 		y=startY;
+		int answer = nrOfActionsSinceReset;
 		nrOfActionsSinceReset=0;
+
+		return answer;
 	}
 }
