@@ -34,7 +34,7 @@ public class Maze {
      * Initialize pheromones to a start value.
      */
     private void initializePheromones() {
-        double[][] pher = new double[getLength()][getWidth()];
+        double[][] pher = new double[getWidth()][getLength()];
         for(double[] a : pher){
             Arrays.fill(a, 1);
         }
@@ -54,10 +54,10 @@ public class Maze {
      * @param Q Normalization factor for amount of dropped pheromone
      */
     public void addPheromoneRoute(Route r, double Q) {
-        Coordinate endPos = start;
+        Coordinate endPos = new Coordinate(0,0);
         for(Direction d: r.getRoute()) {
-            endPos.add(d);
-            pheromones[endPos.getX()][endPos.getY()] = Q * 1/r.size();
+            endPos = endPos.add(d);
+            pheromones[endPos.getX()][endPos.getY()] = pheromones[endPos.getX()][endPos.getY()] + (Q * 1/r.size());
         }
     }
 
@@ -67,6 +67,7 @@ public class Maze {
      * @param Q Normalization factor for amount of dropped pheromone
      */
     public void addPheromoneRoutes(List<Route> routes, double Q) {
+        evaporate(0.1);
         for (Route r : routes) {
             addPheromoneRoute(r, Q);
         }
@@ -76,7 +77,14 @@ public class Maze {
      * Evaporate pheromone
      * @param rho evaporation factor
      */
-    public void evaporate(double rho) {}
+    public void evaporate(double rho) {
+        for(int i = 0; i < pheromones.length; i++){
+            double[] pher = pheromones[i];
+            for(int j = 0; j < pher.length; j++){
+                pheromones[i][j] = (1 - rho) * pheromones[i][j];
+            }
+        }
+    }
 
     /**
      * Width getter
@@ -103,19 +111,19 @@ public class Maze {
     public SurroundingPheromone getSurroundingPheromone(Coordinate position) {
         double north, east, south, west;
 
-        Coordinate coorNorth =  position.add(new Coordinate(0,-1));
+        Coordinate coorNorth = position.add(new Coordinate(0,-1));
         if(inBounds(coorNorth) && walls[coorNorth.getX()][coorNorth.getY()] == 1) north = getPheromone(coorNorth);
         else north = 0;
 
-        Coordinate coorEast =  position.add(new Coordinate(1,0));
+        Coordinate coorEast = position.add(new Coordinate(1,0));
         if(inBounds(coorEast) && walls[coorEast.getX()][coorEast.getY()] == 1) east = getPheromone(coorEast);
         else east = 0;
 
-        Coordinate coorSouth =  position.add(new Coordinate(0,1));
+        Coordinate coorSouth = position.add(new Coordinate(0,1));
         if(inBounds(coorSouth) && walls[coorSouth.getX()][coorSouth.getY()] == 1) south = getPheromone(coorSouth);
         else south = 0;
 
-        Coordinate coorWest =  position.add(new Coordinate(-1,0));
+        Coordinate coorWest = position.add(new Coordinate(-1,0));
         if(inBounds(coorWest) && walls[coorWest.getX()][coorWest.getY()] == 1) west = getPheromone(coorWest);
         else west = 0;
 

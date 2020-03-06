@@ -43,8 +43,9 @@ public class AntColonyOptimization {
                 Ant newAnt = new Ant(maze, spec);
                 Route temp = newAnt.findRoute();
                 routes.add(temp);
-            }
 
+                route = temp;
+            }
             maze.addPheromoneRoutes(routes, Q);
         }
 
@@ -56,14 +57,14 @@ public class AntColonyOptimization {
      */
     public static void main(String[] args) throws FileNotFoundException {
     	//parameters
-    	int gen = 1;
-        int noGen = 1;
+    	int gen = 2;
+        int noGen = 10;
         double Q = 1600;
         double evap = 0.1;
         
         //construct the optimization objects
-        Maze maze = Maze.createMaze("./Swarm Intelligence/data/easy maze.txt");
-        PathSpecification spec = PathSpecification.readCoordinates("./Swarm Intelligence/data/easy coordinates.txt");
+        Maze maze = Maze.createMaze("./data/easy maze.txt");
+        PathSpecification spec = PathSpecification.readCoordinates("./data/easy coordinates.txt");
         AntColonyOptimization aco = new AntColonyOptimization(maze, gen, noGen, Q, evap);
         
         //save starting time
@@ -72,7 +73,6 @@ public class AntColonyOptimization {
         //run optimization
         Route shortestRoute = aco.findShortestRoute(spec);
         //System.out.println(shortestRoute.size());
-
 
 
         //print time taken
