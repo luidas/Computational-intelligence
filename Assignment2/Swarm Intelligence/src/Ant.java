@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Random;
 
 /**
@@ -33,25 +36,67 @@ public class Ant {
     public Route findRoute() {
         Route route = new Route(start);
 
+        ArrayList<Coordinate> visited = new ArrayList<>();
+        visited.add(start);
+
         while(currentPosition != end){
-            SurroundingPheromone surroundingPheromone = maze.getSurroundingPheromone(currentPosition);
 
-            double north = surroundingPheromone.get(Direction.North);
-            double probaNorth = north/(surroundingPheromone.getTotalSurroundingPheromone());
 
-            double south = surroundingPheromone.get(Direction.South);
-            double probaSouth = south/(surroundingPheromone.getTotalSurroundingPheromone());
 
-            double east = surroundingPheromone.get(Direction.East);
-            double probaEast = east/(surroundingPheromone.getTotalSurroundingPheromone());
+            Direction nextDirection = getNextMove(visited);
+            Coordinate nextMove = Direction.dirToCoordinateDelta(nextDirection);
 
-            double west = surroundingPheromone.get(Direction.West);
-            double probaWest = west/(surroundingPheromone.getTotalSurroundingPheromone());
 
-            Math.max(probaNorth, Math.max(probaSouth, Math.max(probaEast, probaWest)));
+            currentPosition = currentPosition.add(nextMove);
+            route.add(nextDirection);
+            visited.add(currentPosition);
+
+            System.out.println(currentPosition);
         }
 
         return route;
+    }
+
+    public Direction getNextMove(ArrayList<Coordinate> visited) {
+        SurroundingPheromone surroundingPheromone = maze.getSurroundingPheromone(currentPosition);
+
+        HashMap<Direction, Double> directions = new HashMap<>();
+
+
+        double north = surroundingPheromone.get(Direction.North);
+        double probaNorth = north/(surroundingPheromone.getTotalSurroundingPheromone());
+        if(north!=0 && !visited.contains(currentPosition.add(Direction.dirToCoordinateDelta(Direction.North)))) {
+            directions.put(Direction.North, probaNorth);
+        }
+
+        double south = surroundingPheromone.get(Direction.South);
+        double probaSouth = south/(surroundingPheromone.getTotalSurroundingPheromone());
+        if(south!=0 && !visited.contains(currentPosition.add(Direction.dirToCoordinateDelta(Direction.South)))) {
+            directions.put(Direction.South, probaSouth);
+        }
+
+        double east = surroundingPheromone.get(Direction.East);
+        double probaEast = east/(surroundingPheromone.getTotalSurroundingPheromone());
+        if (east!=0 && !visited.contains(currentPosition.add(Direction.dirToCoordinateDelta(Direction.East)))) {
+            directions.put(Direction.East, probaEast);
+        }
+
+        double west = surroundingPheromone.get(Direction.West);
+        double probaWest = west/(surroundingPheromone.getTotalSurroundingPheromone());
+        if(west!= 0 && !visited.contains(currentPosition.add(Direction.dirToCoordinateDelta(Direction.West)))) {
+            directions.put(Direction.West, probaWest);
+        }
+
+        double max = Math.max(probaNorth, Math.max(probaSouth, Math.max(probaEast, probaWest)));
+
+        Direction result = null;
+
+
+        for(Direction dirr: directions.keySet()){
+            if(directions.get(dirr) == max) result = dirr; break;
+        }
+
+        return result;
     }
 }
 

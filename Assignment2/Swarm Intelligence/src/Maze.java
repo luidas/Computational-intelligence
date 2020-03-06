@@ -104,24 +104,26 @@ public class Maze {
         double north, east, south, west;
 
         Coordinate coorNorth =  position.add(new Coordinate(0,-1));
-        if(walls[coorNorth.getX()][coorNorth.getY()] == 0) north = getPheromone(coorNorth);
-        else north = -1;
+        if(inBounds(coorNorth) && walls[coorNorth.getX()][coorNorth.getY()] == 1) north = getPheromone(coorNorth);
+        else north = 0;
 
         Coordinate coorEast =  position.add(new Coordinate(1,0));
-        if(walls[coorEast.getX()][coorEast.getY()] == 0) east = getPheromone(coorEast);
-        else east = -1;
+        if(inBounds(coorEast) && walls[coorEast.getX()][coorEast.getY()] == 1) east = getPheromone(coorEast);
+        else east = 0;
 
         Coordinate coorSouth =  position.add(new Coordinate(0,1));
-        if(walls[coorSouth.getX()][coorSouth.getY()] == 0) south = getPheromone(coorSouth);
-        else south = -1;
+        if(inBounds(coorSouth) && walls[coorSouth.getX()][coorSouth.getY()] == 1) south = getPheromone(coorSouth);
+        else south = 0;
 
         Coordinate coorWest =  position.add(new Coordinate(-1,0));
-        if(walls[coorWest.getX()][coorWest.getY()] == 0) west = getPheromone(coorWest);
-        else west = -1;
+        if(inBounds(coorWest) && walls[coorWest.getX()][coorWest.getY()] == 1) west = getPheromone(coorWest);
+        else west = 0;
 
         SurroundingPheromone surroundingPheromone = new SurroundingPheromone(north, east, south, west);
         return surroundingPheromone;
     }
+
+
 
     /**
      * Pheromone getter for a specific position. If the position is not in bounds returns 0
@@ -129,7 +131,11 @@ public class Maze {
      * @return pheromone at point
      */
     private double getPheromone(Coordinate pos) {
-        return pheromones[pos.getX()][pos.getY()];
+        if(inBounds(pos)) {
+            return pheromones[pos.getX()][pos.getY()];
+        } else {
+            return 0;
+        }
     }
 
 
