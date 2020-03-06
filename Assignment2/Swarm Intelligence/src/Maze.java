@@ -1,5 +1,7 @@
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -31,7 +33,13 @@ public class Maze {
     /**
      * Initialize pheromones to a start value.
      */
-    private void initializePheromones() {}
+    private void initializePheromones() {
+        double[][] pher = new double[getLength()][getWidth()];
+        for(double[] a : pher){
+            Arrays.fill(a, 1);
+        }
+        this.pheromones = pher;
+    }
 
     /**
      * Reset the maze for a new shortest path problem.
@@ -45,7 +53,9 @@ public class Maze {
      * @param r The route of the ants
      * @param Q Normalization factor for amount of dropped pheromone
      */
-    public void addPheromoneRoute(Route r, double Q) {}
+    public void addPheromoneRoute(Route r, double Q) {
+
+    }
 
     /**
      * Update pheromones for a list of routes
@@ -87,7 +97,26 @@ public class Maze {
      * @return the pheromones of the neighbouring positions.
      */
     public SurroundingPheromone getSurroundingPheromone(Coordinate position) {
-        return null;
+        double north, east, south, west;
+
+        Coordinate coorNorth =  position.add(new Coordinate(0,-1));
+        if(walls[coorNorth.getX()][coorNorth.getY()] == 0) north = getPheromone(coorNorth);
+        else north = -1;
+
+        Coordinate coorEast =  position.add(new Coordinate(1,0));
+        if(walls[coorEast.getX()][coorEast.getY()] == 0) east = getPheromone(coorEast);
+        else east = -1;
+
+        Coordinate coorSouth =  position.add(new Coordinate(0,1));
+        if(walls[coorSouth.getX()][coorSouth.getY()] == 0) south = getPheromone(coorSouth);
+        else south = -1;
+
+        Coordinate coorWest =  position.add(new Coordinate(-1,0));
+        if(walls[coorWest.getX()][coorWest.getY()] == 0) west = getPheromone(coorWest);
+        else west = -1;
+
+        SurroundingPheromone surroundingPheromone = new SurroundingPheromone(north, east, south, west);
+        return surroundingPheromone;
     }
 
     /**
@@ -96,7 +125,7 @@ public class Maze {
      * @return pheromone at point
      */
     private double getPheromone(Coordinate pos) {
-        return 0;
+        return pheromones[pos.getX()][pos.getY()];
     }
 
 
