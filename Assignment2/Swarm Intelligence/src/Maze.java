@@ -54,7 +54,7 @@ public class Maze {
      * @param Q Normalization factor for amount of dropped pheromone
      */
     public void addPheromoneRoute(Route r, double Q) {
-        Coordinate endPos = new Coordinate(0,0);
+        Coordinate endPos = new Coordinate(1,1);
         for(Direction d: r.getRoute()) {
             endPos = endPos.add(d);
             pheromones[endPos.getX()][endPos.getY()] = pheromones[endPos.getX()][endPos.getY()] + (Q * 1/r.size());
@@ -144,6 +144,10 @@ public class Maze {
         } else {
             return 0;
         }
+    }
+
+    public void changePheromoneToNull(Coordinate pos) {
+        pheromones[pos.getX()][pos.getY()] = 0;
     }
 
 

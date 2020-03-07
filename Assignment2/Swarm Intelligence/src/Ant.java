@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Class that represents the ants functionality.
@@ -37,15 +34,28 @@ public class Ant {
         Route route = new Route(start);
 
         ArrayList<Coordinate> visited = new ArrayList<>();
+
         visited.add(start);
 
         while(!currentPosition.equals(end)){
             Direction nextDirection = getNextMove(visited);
-            Coordinate nextMove = Direction.dirToCoordinateDelta(nextDirection);
 
-            currentPosition = currentPosition.add(nextMove);
-            route.add(nextDirection);
-            visited.add(currentPosition);
+            System.out.println(currentPosition);
+            if(nextDirection == null){
+                Direction before = route.getRoute().get(route.size() - 1);
+                //visited.remove(visited.size() - 1);
+                route.removeLast();
+                visited.add(currentPosition);
+                //visited.add(currentPosition);
+                //maze.changePheromoneToNull(currentPosition);
+                currentPosition = currentPosition.subtract(Direction.dirToCoordinateDelta(before));
+            }
+            else{
+                Coordinate nextMove = Direction.dirToCoordinateDelta(nextDirection);
+                currentPosition = currentPosition.add(nextMove);
+                route.add(nextDirection);
+                visited.add(currentPosition);
+            }
         }
 
         return route;
@@ -123,7 +133,7 @@ public class Ant {
 
         ArrayList<Direction> list = directions.get(max);
 
-        if(list == null) return Direction.South;
+        if(list == null) return null;
         else return list.get(rand.nextInt(list.size()));
     }
 }
