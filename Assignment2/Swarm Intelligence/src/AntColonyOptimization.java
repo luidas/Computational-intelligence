@@ -1,3 +1,5 @@
+import sun.awt.image.VolatileSurfaceManager;
+
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
@@ -39,13 +41,17 @@ public class AntColonyOptimization {
 
         for(int gen = 1; gen <= generations; gen++){
             ArrayList<Route> routes = new ArrayList<>();
+
             for(int ant = 1; ant <= antsPerGen; ant++){
                 Ant newAnt = new Ant(maze, spec);
                 Route temp = newAnt.findRoute();
                 routes.add(temp);
-
-                route = temp;
+                System.out.println(temp.size());
+                if(temp.size() < route.size() || route.size() == 0){
+                    route = temp;
+                }
             }
+            maze.evaporate(evaporation);
             maze.addPheromoneRoutes(routes, Q);
         }
 
@@ -57,29 +63,27 @@ public class AntColonyOptimization {
      */
     public static void main(String[] args) throws FileNotFoundException {
     	//parameters
-    	int gen = 100;
-        int noGen = 100;
+    	int gen = 10;
+        int noGen = 1;
         double Q = 1600;
         double evap = 0.1;
         
         //construct the optimization objects
-        Maze maze = Maze.createMaze("./data/medium maze.txt");
-        PathSpecification spec = PathSpecification.readCoordinates("./data/medium coordinates.txt");
+        Maze maze = Maze.createMaze("./data/easy maze.txt");
+        PathSpecification spec = PathSpecification.readCoordinates("./data/easy coordinates.txt");
         AntColonyOptimization aco = new AntColonyOptimization(maze, gen, noGen, Q, evap);
         
         //save starting time
         long startTime = System.currentTimeMillis();
-        
+
         //run optimization
         Route shortestRoute = aco.findShortestRoute(spec);
-        //System.out.println(shortestRoute.size());
-
 
         //print time taken
         System.out.println("Time taken: " + ((System.currentTimeMillis() - startTime) / 1000.0));
         
         //save solution
-        shortestRoute.writeToFile("./data/medium_solution.txt");
+        shortestRoute.writeToFile("./data/easy_solution.txt");
 
         //print route size
         System.out.println("Route size: " + shortestRoute.size());

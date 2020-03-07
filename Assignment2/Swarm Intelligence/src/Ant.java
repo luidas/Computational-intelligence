@@ -40,14 +40,10 @@ public class Ant {
         while(!currentPosition.equals(end)){
             Direction nextDirection = getNextMove(visited);
 
-            System.out.println(currentPosition);
             if(nextDirection == null){
                 Direction before = route.getRoute().get(route.size() - 1);
-                //visited.remove(visited.size() - 1);
                 route.removeLast();
                 visited.add(currentPosition);
-                //visited.add(currentPosition);
-                //maze.changePheromoneToNull(currentPosition);
                 currentPosition = currentPosition.subtract(Direction.dirToCoordinateDelta(before));
             }
             else{
