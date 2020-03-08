@@ -68,93 +68,51 @@ public class Ant {
      * @param visited ArrayList of already visited Coordinates.
      * @return Direction, or null if dead end.
      */
-    public Direction getNextMove(ArrayList<Coordinate> visited) {
+    private Direction getNextMove(ArrayList<Coordinate> visited) {
         SurroundingPheromone surroundingPheromone = maze.getSurroundingPheromone(currentPosition);
 
         //Probabilities as key, Directions as values.
         HashMap<Double, ArrayList<Direction>> directions = new HashMap<>();
 
-        double north = surroundingPheromone.get(Direction.North);
-        double probaNorth = north/(surroundingPheromone.getTotalSurroundingPheromone());
-        //If proba is zero, it means it is a wall, or it is out of bounds
-        if(north!=0 && !visited.contains(currentPosition.add(Direction.dirToCoordinateDelta(Direction.North)))) {
-            //If probability is not yet in the HashMap
-            if(!directions.containsKey(probaNorth)) {
-                ArrayList<Direction> toAdd = new ArrayList<>();
-                toAdd.add(Direction.North);
-                directions.put(probaNorth, toAdd);
-            }
-            //If probability already in the HashMap
-            else {
-                ArrayList<Direction> previous = directions.get(probaNorth);
-                previous.add(Direction.North);
-                directions.put(probaNorth, previous);
-            }
-        }
-
-        double south = surroundingPheromone.get(Direction.South);
-        double probaSouth = south/(surroundingPheromone.getTotalSurroundingPheromone());
-        //If proba is zero, it means it is a wall, or it is out of bounds
-        if(south!=0 && !visited.contains(currentPosition.add(Direction.dirToCoordinateDelta(Direction.South)))) {
-            //If probability is not yet in the HashMap
-            if(!directions.containsKey(probaSouth)) {
-                ArrayList<Direction> toAdd = new ArrayList<>();
-                toAdd.add(Direction.South);
-                directions.put(probaSouth, toAdd);
-            }
-            //If probability already in the HashMap
-            else {
-                ArrayList<Direction> previous = directions.get(probaSouth);
-                previous.add(Direction.South);
-                directions.put(probaSouth, previous);
-            }
-        }
-
-        double east = surroundingPheromone.get(Direction.East);
-        double probaEast = east/(surroundingPheromone.getTotalSurroundingPheromone());
-        //If proba is zero, it means it is a wall, or it is out of bounds
-        if (east!=0 && !visited.contains(currentPosition.add(Direction.dirToCoordinateDelta(Direction.East)))) {
-            //If probability is not yet in the HashMap
-            if(!directions.containsKey(probaEast)) {
-                ArrayList<Direction> toAdd = new ArrayList<>();
-                toAdd.add(Direction.East);
-                directions.put(probaEast, toAdd);
-            }
-            //If probability already in the HashMap
-            else {
-                ArrayList<Direction> previous = directions.get(probaEast);
-                previous.add(Direction.East);
-                directions.put(probaEast, previous);
-            }
-        }
-
-        double west = surroundingPheromone.get(Direction.West);
-        double probaWest = west/(surroundingPheromone.getTotalSurroundingPheromone());
-        //If proba is zero, it means it is a wall, or it is out of bounds
-        if(west!= 0 && !visited.contains(currentPosition.add(Direction.dirToCoordinateDelta(Direction.West)))) {
-            //If probability is not yet in the HashMap
-            if(!directions.containsKey(probaWest)) {
-                ArrayList<Direction> toAdd = new ArrayList<>();
-                toAdd.add(Direction.West);
-                directions.put(probaWest, toAdd);
-            }
-            //If probability already in the HashMap
-            else {
-                ArrayList<Direction> previous = directions.get(probaWest);
-                previous.add(Direction.West);
-                directions.put(probaWest, previous);
-            }
+        // For every direction, calculate probabilities and place in the hashmap
+        for(Direction direction : Direction.values()) {
+            getCoordinateProbability(direction.name(), surroundingPheromone, directions, visited);
         }
         
-        double max = Integer.MIN_VALUE;
-        for(double proba : directions.keySet()){
-            max = Math.max(max, proba);
+        if (directions.isEmpty()) return null;
+
+        double highestProbability= Collections.max(directions.keySet());
+
+        ArrayList<Direction> coordinates = directions.get(highestProbability);
+
+        return coordinates.get(rand.nextInt(coordinates.size()));
+    }
+
+    /**
+     * Helper function: for the current position, it computes the probabilities for all valid actions
+     * @param dir, either North, West, East, South
+     * @param surroundingPheromone , the amount of pheromone for a specific direction
+     * @param directions, probabilities
+     * @param visited, places already visited
+     */
+    private void getCoordinateProbability(String dir, SurroundingPheromone surroundingPheromone, HashMap<Double, ArrayList<Direction>> directions, ArrayList<Coordinate> visited) {
+        Direction coordinateDir = Direction.valueOf(dir);
+        double direction = surroundingPheromone.get(coordinateDir);
+        double probabilityDir = direction / (surroundingPheromone.getTotalSurroundingPheromone());
+        // If the probability equals zero, it is a wall, or out of bounds, else is a possible path
+        Coordinate coordinate = Direction.dirToCoordinateDelta(coordinateDir);
+        if (probabilityDir != 0 && !visited.contains(currentPosition.add(coordinate))) {
+            // If the probability is not yet in the HashMap
+            if (!directions.containsKey(probabilityDir)){
+                directions.put(probabilityDir, new ArrayList<Direction>(Collections.singleton(coordinateDir)));
+            }
+            // If the probability is already in the HashMap
+            else {
+                ArrayList<Direction> temp = directions.get(probabilityDir);
+                temp.add(coordinateDir);
+                directions.put(probabilityDir, temp);
+            }
         }
-
-        ArrayList<Direction> list = directions.get(max);
-
-        if(list == null) return null;
-        else return list.get(rand.nextInt(list.size()));
     }
 }
 
