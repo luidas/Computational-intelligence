@@ -39,18 +39,25 @@ public class AntColonyOptimization {
     public Route findShortestRoute(PathSpecification spec) {
         Route route = new Route(spec.getStart());
 
+        //For loop for every Generations
         for(int gen = 1; gen <= generations; gen++){
+            //All ants stored in ArrayList so this way they don't learn from each other in the same run.
             ArrayList<Route> routes = new ArrayList<>();
 
+            //For loop for every ants per generation.
             for(int ant = 1; ant <= antsPerGen; ant++){
                 Ant newAnt = new Ant(maze, spec);
                 Route temp = newAnt.findRoute();
                 routes.add(temp);
-                System.out.println(temp.size());
+
+                //This if statement is used to always keep the smallest route. However we don't know if
+                //this is alright for the ACO optimization --> the slides ask for the very last ant.
                 if(temp.size() < route.size() || route.size() == 0){
                     route = temp;
                 }
             }
+
+            //It evaporate the pheromones FOR EVERY cell in the 2D array.
             maze.evaporate(evaporation);
             maze.addPheromoneRoutes(routes, Q);
         }
@@ -76,7 +83,7 @@ public class AntColonyOptimization {
         //save starting time
         long startTime = System.currentTimeMillis();
 
-        //run optimization
+        //run optimization --> Everything starts with this method.
         Route shortestRoute = aco.findShortestRoute(spec);
 
         //print time taken

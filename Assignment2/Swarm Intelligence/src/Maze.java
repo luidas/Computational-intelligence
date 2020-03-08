@@ -57,6 +57,8 @@ public class Maze {
         Coordinate endPos = r.getStart();
         for(Direction d: r.getRoute()) {
             endPos = endPos.add(d);
+
+            //Uses the slides' equations on every cell the route uses.
             pheromones[endPos.getX()][endPos.getY()] = pheromones[endPos.getX()][endPos.getY()] + (Q * 1/r.size());
         }
     }
@@ -144,11 +146,6 @@ public class Maze {
             return 0;
         }
     }
-
-    public void changePheromoneToNull(Coordinate pos) {
-        pheromones[pos.getX()][pos.getY()] = 0;
-    }
-
 
     /**
      * Check whether a coordinate lies in the current maze.
