@@ -33,7 +33,7 @@ public class AntColonyOptimization {
 
     /**
      * Loop that starts the shortest path process
-     * @param spec Spefication of the route we wish to optimize
+     * @param spec specification of the route we wish to optimize
      * @return ACO optimized route
      */
     public Route findShortestRoute(PathSpecification spec) {

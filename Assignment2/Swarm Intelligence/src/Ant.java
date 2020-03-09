@@ -45,6 +45,7 @@ public class Ant {
 
             //If no direction (means that it is a dead end), then go back to your steps.
             if(nextDirection == null){
+                // This is a very expensive operation, easier would be temporary store the route and get the previous locations
                 Direction before = route.getRoute().get(route.size() - 1);
                 route.removeLast();
                 visited.add(currentPosition);
@@ -78,7 +79,7 @@ public class Ant {
         for(Direction direction : Direction.values()) {
             getCoordinateProbability(direction.name(), surroundingPheromone, directions, visited);
         }
-        
+
         if (directions.isEmpty()) return null;
 
         double highestProbability= Collections.max(directions.keySet());
