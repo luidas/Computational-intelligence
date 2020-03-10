@@ -1,3 +1,5 @@
+import com.sun.media.jfxmediaimpl.HostUtils;
+
 import java.util.*;
 
 /**
@@ -82,9 +84,16 @@ public class Ant {
 
         if (directions.isEmpty()) return null;
 
-        double highestProbability= Collections.max(directions.keySet());
+        double randomDouble = rand.nextDouble();
+        double cumulativeProbabilities = 0.0;
+        double key = 0;
+        for(double proba : directions.keySet()){
+            cumulativeProbabilities += proba;
+            key = proba;
+            if(randomDouble <= cumulativeProbabilities) break;
+        }
 
-        ArrayList<Direction> coordinates = directions.get(highestProbability);
+        ArrayList<Direction> coordinates = directions.get(key);
 
         return coordinates.get(rand.nextInt(coordinates.size()));
     }

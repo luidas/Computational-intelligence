@@ -56,8 +56,6 @@ public class AntColonyOptimization {
                     route = temp;
                 }
             }
-
-            //It evaporate the pheromones FOR EVERY cell in the 2D array.
             maze.evaporate(evaporation);
             maze.addPheromoneRoutes(routes, Q);
         }
@@ -70,14 +68,14 @@ public class AntColonyOptimization {
      */
     public static void main(String[] args) throws FileNotFoundException {
     	//parameters
-    	int gen = 10;
-        int noGen = 1;
+    	int gen = 100;
+        int noGen = 100;
         double Q = 1600;
         double evap = 0.1;
         
         //construct the optimization objects
-        Maze maze = Maze.createMaze("./data/easy maze.txt");
-        PathSpecification spec = PathSpecification.readCoordinates("./data/easy coordinates.txt");
+        Maze maze = Maze.createMaze("./data/medium maze.txt");
+        PathSpecification spec = PathSpecification.readCoordinates("./data/medium coordinates.txt");
         AntColonyOptimization aco = new AntColonyOptimization(maze, gen, noGen, Q, evap);
         
         //save starting time
@@ -90,7 +88,7 @@ public class AntColonyOptimization {
         System.out.println("Time taken: " + ((System.currentTimeMillis() - startTime) / 1000.0));
         
         //save solution
-        shortestRoute.writeToFile("./data/easy_solution.txt");
+        shortestRoute.writeToFile("./data/medium_solution.txt");
 
         //print route size
         System.out.println("Route size: " + shortestRoute.size());
