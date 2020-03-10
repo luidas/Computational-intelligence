@@ -1,6 +1,9 @@
+import javafx.util.Pair;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -8,9 +11,10 @@ import java.util.stream.Collectors;
  * TSP problem solver using genetic algorithms.
  */
 public class GeneticAlgorithm {
-
     private int generations;
     private int popSize;
+    private static final int STOPPING = 100;
+    private int currentGenCount;
 
     /**
      * Constructs a new 'genetic algorithm' object.
@@ -45,20 +49,61 @@ public class GeneticAlgorithm {
     public int[] solveTSP(TSPData pd) {
         int[] initPopulation = pd.getDistances()[0];
         int[][] totalPopulation = new int[popSize][initPopulation.length];
+        double[] fitnessArr = new double[initPopulation.length];
 
         for(int i = 0; i < popSize; i++) {
             shuffle(initPopulation);
             totalPopulation[i] = initPopulation;
         }
 
+        // while loop or something else
+        while (currentGenCount < STOPPING) {
+            // 4 Compute the function
+            for (int j = 0; j < totalPopulation.length; j++) {
+                fitnessArr[j] = getFitness(totalPopulation[j], pd);
+            }
 
+            // 5 Selection
+            // 6a Crossover
+
+            // 6b Mutation
+
+            // 7 Put into new population
+
+            // 8 Replace the old population with the new population
+
+        }
 
         return null;
     }
 
-//    private double getFitness(int[] child) {
-//
-//    }
+    private int[] selection(double[] fitness, int[][] population) {
+        int index = 0;
+        List<> fitnessChild = new HashMap<>();
+
+        for(int i = 0; i < fitness.length; i++) {
+            fitnessChild.put(fitness[i], population[i]);
+        }
+
+        int r = (int)Math.random() * 1;
+
+        while (r > 0) {
+            r = r - fitnessChild.keySet().
+        }
+    }
+
+    private double getFitness(int[] child, TSPData pd) {
+        double start = pd.getStartDistances()[child[0]];
+        double end = pd.getEndDistances()[child[child.length]];
+
+        double sum = start + end;
+
+        for (int i = 0; i < child.length - 1; i++) {
+            sum += pd.getDistances()[child[i]][child[i + 1]];
+        }
+
+        return 1/sum;
+    }
 
     private int[] mutation(int[] child) {
         // double pm = 0.001; <-- Ask this
