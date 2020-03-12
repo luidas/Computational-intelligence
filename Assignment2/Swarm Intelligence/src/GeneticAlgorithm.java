@@ -14,6 +14,7 @@ public class GeneticAlgorithm {
     private int generations;
     private int popSize;
     //private static final int STOPPING = 10;
+    // Why do we need this?
     private int currentGenCount;
 
     /**
@@ -62,13 +63,58 @@ public class GeneticAlgorithm {
         }
 
         // 2) Determine the fitness of this generation
-        int[][]
+        double[] fitness = getFitness(initGeneration, pd);
+
         // 3) Select the best (children with the highest fitness) children -> selection
+
         // 4) Do crossover and mutation on these children
         // 5) Put the children back into the initial generation
         // 6) Repeat step 1 - 5 until max number of generations is reached
 
         return null;
+    }
+
+    private double[] getFitness(int[][] generation,TSPData pd) {
+        double[] fitnessOfGeneration = new double[popSize];
+        int[] startDistances = pd.getStartDistances();
+        int[] endDistances = pd.getEndDistances();
+
+        // For each child of the generation determine the distance, of the order a child
+        for(int i = 0; i < popSize; i++) {
+            double sum = 0.0;
+
+            int[] child = generation[i];
+            int childStartIndex = child[0];
+            int childEndIndex = child[child.length - 1];
+            int start = startDistances[childStartIndex];
+            int end = endDistances[childEndIndex];
+
+            // Assumption made here: the first and last element of the child are the start and finish of the route taken in the maze
+            // All products in between are the products that lay between the start and finish
+            for(int j = 1; j < child.length; j++) {
+               int tempProduct = child[j];
+               int previousProduct = child[j - 1];
+               // Lookup the distance from the previous product to this product
+               // Keep in mind you still have to determine the distance from the first product(from start to pr1 -> pr1 -> pr2) to the next product, same for the finish
+               int distanceBetween = pd.getDistances()[previousProduct][tempProduct];
+
+               sum += distanceBetween;
+            }
+
+            sum = sum + end + start;
+            fitnessOfGeneration[i] = 1 / (Math.pow(sum, 8) + 1);
+        }
+
+        double sumFitness = 0.0;
+
+        for(double item: fitnessOfGeneration){
+            sumFitness += item;
+        }
+        for(int i = 0; i < fitnessOfGeneration.length; i++){
+            fitnessOfGeneration[i] = (fitnessOfGeneration[i] / sumFitness);
+        }
+
+        return fitnessOfGeneration;
     }
 
 
