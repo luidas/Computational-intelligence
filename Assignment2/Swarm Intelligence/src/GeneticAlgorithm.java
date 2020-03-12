@@ -69,30 +69,30 @@ public class GeneticAlgorithm {
             double[] fitness = getFitness(initGeneration, pd, numGeneration);
             // 3) Select the best (children with the highest fitness) children -> selection
 
-            // We must avoid picking the same child twice
+            Stack<Integer> indicesProbabilities = new Stack<>();
+
             ArrayList<Double> tempFitness = new ArrayList<>();
-            ArrayList<Double> listFitness = new ArrayList<>();
             for(double item : fitness){
                 tempFitness.add(item);
-                listFitness.add(item);
             }
 
-            int[] childA1 = selection(tempFitness, initGeneration);
-            int[] childB1 = selection(tempFitness, initGeneration);
+            for(int i = 0; i < fitness.length; i+=2) {
+                ArrayList<int[]> tempChildren = new ArrayList<>();
 
-            int[] childA2 = selection(tempFitness, initGeneration);
-            int[] childB2 = selection(tempFitness, initGeneration);
+                int[] child1 = selection(tempFitness, indicesProbabilities, initGeneration);
+                int[] child2 = selection(tempFitness, indicesProbabilities, initGeneration);
 
-            // 4) Do crossover and mutation on these two children
-            int[] crossoverChild1 = crossOver(childA1, childB1);
-            int[] mutateChild1 = mutation(crossoverChild1);
+                tempChildren.add(child1);
+                tempChildren.add(child2);
 
-            // 5) Put the child back into the initial generation
+                ArrayList<int[]> crossover = crossOver(tempChildren);
 
-            double minFitness1 = Collections.min(listFitness);
-            int indexMin1 =  tempFitness.indexOf(minFitness1);
+                ArrayList<int[]> mutation = mutation(crossover);
 
-            initGeneration[indexMin1] = mutateChild1;
+                initGeneration[indicesProbabilities.pop()] = mutation.get(0);
+                initGeneration[indicesProbabilities.pop()] = mutation.get(1);
+
+            }
 
             numGeneration++;
         }
@@ -110,38 +110,55 @@ public class GeneticAlgorithm {
         return initGeneration[indexMax];
     }
 
-    private int[] mutation(int[] child) {
+    private ArrayList<int[]> mutation(ArrayList<int[]> children) {
         // double pm = 0.001; <-- Ask this
         // Bit flip or swapping two products?
-        int index1 = (int)(Math.random() * child.length);
-        int index2 = (int)(Math.random() * child.length);
+        Random rand = new Random();
+        ArrayList<int[]> tempChildren = new ArrayList<>();
 
-        int temp = child[index2];
-        child[index2] = child[index1];
-        child[index1] = temp;
+        if(rand.nextFloat() <= 0.001) {
+            for(int[] child: children){
+                int index1 = (int)(Math.random() * child.length);
+                int index2 = (int)(Math.random() * child.length);
 
-        return child;
+                int temp = child[index2];
+                child[index2] = child[index1];
+                child[index1] = temp;
+                tempChildren.add(child);
+            }
+            return tempChildren;
+        }
+        return children;
     }
 
-    private int[] crossOver(int[] child1, int[] child2) {
+    private ArrayList<int[]> crossOver(ArrayList<int[]> children) {
         // So for the selection we should take into account the probability that one child is getting crossover and mutated
         // double crossoverProb = 0.7; <-- Ask this
-        Random r = new Random();
-        int start = r.nextInt(child1.length);
-        int end = r.nextInt(child1.length - start) + start + 1;
-        int[] newOffspringArray = Arrays.copyOfRange(child1, start, end);
-        List<Integer> newOffspring = Arrays.stream(newOffspringArray).boxed().collect(Collectors.toList());
+        Random rand = new Random();
+        ArrayList<int[]> tempChildren = new ArrayList<>();
 
-        for (int temp : child2) {
-            if (!newOffspring.contains(temp)) {
-                newOffspring.add(temp);
+        if(rand.nextFloat() <= 0.7) {
+            for(int i = 0; i < 2; i++){
+                Random r = new Random();
+                int start = r.nextInt(children.get(0).length);
+                int end = r.nextInt(children.get(0).length - start) + start + 1;
+                int[] newOffspringArray = Arrays.copyOfRange(children.get(i), start, end);
+                List<Integer> newOffspring = Arrays.stream(newOffspringArray).boxed().collect(Collectors.toList());
+
+                for (int temp : children.get(1)) {
+                    if (!newOffspring.contains(temp)) {
+                        newOffspring.add(temp);
+                    }
+                }
+
+                tempChildren.add(newOffspring.stream().mapToInt(j -> (int) j).toArray());
             }
+            return tempChildren;
         }
-
-        return newOffspring.stream().mapToInt(i -> (int) i).toArray();
+        return children;
     }
 
-    private int[] selection(ArrayList<Double> fitness, int[][] generation) {
+    private int[] selection(ArrayList<Double> fitness, Stack<Integer> indices, int[][] generation) {
         /**int index = 0;
 
         double r = Math.random();
@@ -159,7 +176,8 @@ public class GeneticAlgorithm {
         double maxProbability = Collections.max(fitness);
         int indexMax = fitness.indexOf(maxProbability);
 
-        fitness.set(indexMax, 0.0);
+        fitness.remove(indexMax);
+        indices.push(indexMax);
 
         return generation[indexMax];
 
@@ -214,8 +232,8 @@ public class GeneticAlgorithm {
      */
     public static void main(String[] args) throws IOException, ClassNotFoundException {
     	//parameters
-    	int populationSize = 20;
-        int generations = 20;
+    	int populationSize = 1000;
+        int generations = 1000;
         String persistFile = "./productMatrixDist";
         
         //setup optimization

@@ -76,8 +76,8 @@ public class AntColonyOptimization {
         double evap = 0.1;
         
         //construct the optimization objects
-        Maze maze = Maze.createMaze("./data/easy maze.txt");
-        PathSpecification spec = PathSpecification.readCoordinates("./data/easy coordinates.txt");
+        Maze maze = Maze.createMaze("./data/insane maze.txt");
+        PathSpecification spec = PathSpecification.readCoordinates("./data/insane coordinates.txt");
         AntColonyOptimization aco = new AntColonyOptimization(maze, gen, noGen, Q, evap);
         
         //save starting time
@@ -90,7 +90,7 @@ public class AntColonyOptimization {
         System.out.println("Time taken: " + ((System.currentTimeMillis() - startTime) / 1000.0));
         
         //save solution
-        shortestRoute.writeToFile("./data/easy_solution.txt");
+        shortestRoute.writeToFile("./data/insane.txt");
 
         //print route size
         System.out.println("Route size: " + shortestRoute.size());
