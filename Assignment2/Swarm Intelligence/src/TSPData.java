@@ -234,7 +234,7 @@ public class TSPData implements Serializable {
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         
     	//parameters
-    	int gen = 1;
+    	int gen = 10;
         int noGen = 1;
         double Q = 1000;
         double evap = 0.1;
