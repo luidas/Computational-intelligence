@@ -1,10 +1,7 @@
 import javafx.util.Pair;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -62,19 +59,113 @@ public class GeneticAlgorithm {
             initGeneration[i] = temp;
         }
 
-        // 2) Determine the fitness of this generation
-        double[] fitness = getFitness(initGeneration, pd);
+        int numGeneration = 0;
 
-        // 3) Select the best (children with the highest fitness) children -> selection
+        // Keep doing the process until we have reached the total number of generations
+        // However, we must decide if we in one generation mutate all children or only some of them
+        // because we need another for loop in the while loop and it becomes very expensive operation
+        while(numGeneration < generations) {
+            // 2) Determine the fitness of this generation
+            double[] fitness = getFitness(initGeneration, pd, numGeneration);
+            // 3) Select the best (children with the highest fitness) children -> selection
 
-        // 4) Do crossover and mutation on these children
-        // 5) Put the children back into the initial generation
-        // 6) Repeat step 1 - 5 until max number of generations is reached
+            // We must avoid picking the same child twice
+            ArrayList<Double> tempFitness = new ArrayList<>();
+            ArrayList<Double> listFitness = new ArrayList<>();
+            for(double item : fitness){
+                tempFitness.add(item);
+                listFitness.add(item);
+            }
 
-        return null;
+            int[] childA1 = selection(tempFitness, initGeneration);
+            int[] childB1 = selection(tempFitness, initGeneration);
+
+            int[] childA2 = selection(tempFitness, initGeneration);
+            int[] childB2 = selection(tempFitness, initGeneration);
+
+            // 4) Do crossover and mutation on these two children
+            int[] crossoverChild1 = crossOver(childA1, childB1);
+            int[] mutateChild1 = mutation(crossoverChild1);
+
+            // 5) Put the child back into the initial generation
+
+            double minFitness1 = Collections.min(listFitness);
+            int indexMin1 =  tempFitness.indexOf(minFitness1);
+
+            initGeneration[indexMin1] = mutateChild1;
+
+            numGeneration++;
+        }
+        // 6) Repeat step 2 - 5 until max number of generations is reached
+
+        double[] fitness = getFitness(initGeneration, pd, numGeneration);
+        ArrayList<Double> tempFitness = new ArrayList<>();
+        for(double item : fitness){
+            tempFitness.add(item);
+        }
+
+        double maxProbability = Collections.max(tempFitness);
+        int indexMax = tempFitness.indexOf(maxProbability);
+
+        return initGeneration[indexMax];
     }
 
-    private double[] getFitness(int[][] generation,TSPData pd) {
+    private int[] mutation(int[] child) {
+        // double pm = 0.001; <-- Ask this
+        // Bit flip or swapping two products?
+        int index1 = (int)(Math.random() * child.length);
+        int index2 = (int)(Math.random() * child.length);
+
+        int temp = child[index2];
+        child[index2] = child[index1];
+        child[index1] = temp;
+
+        return child;
+    }
+
+    private int[] crossOver(int[] child1, int[] child2) {
+        // So for the selection we should take into account the probability that one child is getting crossover and mutated
+        // double crossoverProb = 0.7; <-- Ask this
+        Random r = new Random();
+        int start = r.nextInt(child1.length);
+        int end = r.nextInt(child1.length - start) + start + 1;
+        int[] newOffspringArray = Arrays.copyOfRange(child1, start, end);
+        List<Integer> newOffspring = Arrays.stream(newOffspringArray).boxed().collect(Collectors.toList());
+
+        for (int temp : child2) {
+            if (!newOffspring.contains(temp)) {
+                newOffspring.add(temp);
+            }
+        }
+
+        return newOffspring.stream().mapToInt(i -> (int) i).toArray();
+    }
+
+    private int[] selection(ArrayList<Double> fitness, int[][] generation) {
+        /**int index = 0;
+
+        double r = Math.random();
+
+        while (r > 0) {
+            r = r - fitness.get(index);
+            index++;
+        }
+        index--;
+
+        fitness.remove(index);
+
+        return generation[index];**/
+
+        double maxProbability = Collections.max(fitness);
+        int indexMax = fitness.indexOf(maxProbability);
+
+        fitness.set(indexMax, 0.0);
+
+        return generation[indexMax];
+
+    }
+
+    private double[] getFitness(int[][] generation,TSPData pd, int numGeneration) {
         double[] fitnessOfGeneration = new double[popSize];
         int[] startDistances = pd.getStartDistances();
         int[] endDistances = pd.getEndDistances();
@@ -102,7 +193,7 @@ public class GeneticAlgorithm {
             }
 
             sum = sum + end + start;
-            fitnessOfGeneration[i] = 1 / (Math.pow(sum, 8) + 1);
+            fitnessOfGeneration[i] = (1 / (Math.pow(sum, 8) + 1)) * Math.pow(10, numGeneration);
         }
 
         double sumFitness = 0.0;
