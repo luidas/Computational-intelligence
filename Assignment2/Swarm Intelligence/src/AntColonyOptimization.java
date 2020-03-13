@@ -1,6 +1,6 @@
-import sun.awt.image.VolatileSurfaceManager;
-
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -56,41 +56,58 @@ public class AntColonyOptimization {
                     route = temp;
                 }
             }
+//            int sum = 0;
+//            for (Route r : routes) {
+//                sum+=r.size();
+//            }
+//            System.out.print(sum/routes.size() + " ");
+
             maze.evaporate(evaporation);
             maze.addPheromoneRoutes(routes, Q);
         }
-
         return route;
     }
 
     /**
      * Driver function for Assignment 1
      */
-    public static void main(String[] args) throws FileNotFoundException {
-    	//parameters
-    	int gen = 100;
-        int noGen = 100;
-        double Q = 1600;
-        double evap = 0.1;
-        
-        //construct the optimization objects
-        Maze maze = Maze.createMaze("./data/medium maze.txt");
-        PathSpecification spec = PathSpecification.readCoordinates("./data/medium coordinates.txt");
-        AntColonyOptimization aco = new AntColonyOptimization(maze, gen, noGen, Q, evap);
-        
-        //save starting time
-        long startTime = System.currentTimeMillis();
+    public static void main(String[] args) throws IOException {
+        //parameters
 
-        //run optimization --> Everything starts with this method.
-        Route shortestRoute = aco.findShortestRoute(spec);
 
-        //print time taken
-        System.out.println("Time taken: " + ((System.currentTimeMillis() - startTime) / 1000.0));
-        
-        //save solution
-        shortestRoute.writeToFile("./data/medium_solution.txt");
+            //FileWriter csvWriter = new FileWriter("medium evaporation.csv");
+            //for(double evar = 0; evar <= 1; evar+=0.01){
+            int gen = 10;
+            int noGen = 100;
+            double Q = 200;
+            double evap = 0.2;
 
-        //print route size
-        System.out.println("Route size: " + shortestRoute.size());
-    }
+            //construct the optimization objects
+            Maze maze = Maze.createMaze("./data/medium maze.txt");
+            PathSpecification spec = PathSpecification.readCoordinates("./data/medium coordinates.txt");
+            AntColonyOptimization aco = new AntColonyOptimization(maze, noGen, gen, Q, evap);
+
+            //save starting time
+            long startTime = System.currentTimeMillis();
+
+            //run optimization --> Everything starts with this method.
+            Route shortestRoute = aco.findShortestRoute(spec);
+
+            //print time taken
+            System.out.println("Time taken: " + ((System.currentTimeMillis() - startTime) / 1000.0));
+
+            //save solution
+            shortestRoute.writeToFile("./data/medium-solution.txt");
+
+            //print route size
+            System.out.println("Route size: " + shortestRoute.size());
+            //csvWriter.append(shortestRoute.size() + "\n");
+
+            //System.out.println(evar);
+        }
+
+
+        //csvWriter.flush();
+        //csvWriter.close();
+    //}
 }
