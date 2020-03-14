@@ -46,9 +46,7 @@ public class Ant {
             //If no direction (means that it is a dead end), then go back to your steps.
             if(nextDirection == null){
                 // This is a very expensive operation, easier would be temporary store the route and get the previous locations
-                Direction before = route.getRoute().get(route.size() - 1);
-                route.removeLast();
-                visited.add(currentPosition);
+                Direction before = route.removeLast();
                 currentPosition = currentPosition.subtract(Direction.dirToCoordinateDelta(before));
             }
             //otherwise, update currentPosition and route.
@@ -112,7 +110,7 @@ public class Ant {
         if (probabilityDir != 0 && !visited.contains(currentPosition.add(coordinate))) {
             // If the probability is not yet in the HashMap
             if (!directions.containsKey(probabilityDir)){
-                directions.put(probabilityDir, new ArrayList<Direction>(Collections.singleton(coordinateDir)));
+                directions.put(probabilityDir, new ArrayList<>(Collections.singleton(coordinateDir)));
             }
             // If the probability is already in the HashMap
             else {
