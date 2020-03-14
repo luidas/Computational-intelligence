@@ -1,6 +1,10 @@
+import javafx.util.Pair;
+import sun.security.util.ArrayUtil;
+
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * TSP problem solver using genetic algorithms.
@@ -46,7 +50,7 @@ public class GeneticAlgorithm {
     // 1) Create the initial generation with shuffle
     int[][] distances = pd.getDistances();
     int[][] initGeneration = new int[popSize][distances.length];
-    int[] initChild = new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17};
+    int[] initChild = IntStream.range(0, 18).toArray();
 
     initGeneration[0] = initChild;
 
@@ -62,119 +66,100 @@ public class GeneticAlgorithm {
     // Keep doing the process until we have reached the predefined number of generations
     while (currentGen < generations) {
       // 2) Determine the fitness of each chromosome in every generation
-      double[] fitness = getFitness(initGeneration, pd, currentGen);
+      List<Double> fitness = getFitness(initGeneration, pd, currentGen);
+      List<Double> tempFitness = getFitness(initGeneration, pd, currentGen);
 
       // 3) Select the best (highest fitness) children via selection
       Stack<Integer> indicesMaxFitness = new Stack<>();
 
-      ArrayList<Double> tempFitness = new ArrayList<>();
-      for (double item : fitness) {
-        tempFitness.add(item);
-      }
+      for (int i = 0; i < fitness.size(); i += 2) {
+        List<int[]> children = new ArrayList<>();
 
-      for (int i = 0; i < fitness.length; i += 2) {
-        ArrayList<int[]> tempChildren = new ArrayList<>();
-
+        // Get two children with current highest fitness probabilities
         int[] child1 = selection(tempFitness, indicesMaxFitness, initGeneration);
         int[] child2 = selection(tempFitness, indicesMaxFitness, initGeneration);
 
-        tempChildren.add(child1);
-        tempChildren.add(child2);
+        children.add(child1);
+        children.add(child2);
 
-        ArrayList<int[]> crossover = crossOver(tempChildren);
+        Random randCrossOver = new Random();
+        // Apply crossover with probability 0.7
+        if (randCrossOver.nextFloat() <= 0.7) {
+          children = crossOver(children);
+        }
 
-        ArrayList<int[]> mutation = mutation(crossover);
+        // Apply mutation with probability 0.001
+        Random randMutation = new Random();
+        if(randMutation.nextFloat() <= 0.001) {
+          mutation(children);
+        }
 
-        initGeneration[indicesMaxFitness.pop()] = mutation.get(0);
-        initGeneration[indicesMaxFitness.pop()] = mutation.get(1);
-
+        initGeneration[indicesMaxFitness.pop()] = children.get(0);
+        initGeneration[indicesMaxFitness.pop()] = children.get(1);
       }
-
       currentGen++;
     }
 
     // 6) Repeat step 2 - 5 until max number of generations is reached
-    double[] fitness = getFitness(initGeneration, pd, currentGen);
-    ArrayList<Double> tempFitness = new ArrayList<>();
-    for (double item : fitness) {
-      tempFitness.add(item);
-    }
+    // 7) Select the fitess child of the last generation
+    List<Double> fitness = getFitness(initGeneration, pd, currentGen);
 
-    double maxProbability = Collections.max(tempFitness);
-    int indexMax = tempFitness.indexOf(maxProbability);
+    double maxProbability = Collections.max(fitness);
+    int indexMax = fitness.indexOf(maxProbability);
 
     return initGeneration[indexMax];
   }
 
     /**
-     * Given two chromosomes, they are mutated or not.
-     *
+     * Given two chromosomes, they are either mutated or cloned.
      * @param children chromosomes to consider for mutation
-     * @return the mutated or original chromosomes
      */
-  private ArrayList<int[]> mutation(ArrayList<int[]> children) {
-    Random rand = new Random();
-    ArrayList<int[]> tempChildren = new ArrayList<>();
+  private void mutation(List<int[]> children) {
+    for (int[] child : children) {
+      int index1 = (int) (Math.random() * child.length);
+      int index2 = (int) (Math.random() * child.length);
 
-    // Apply with probability of mutation = 0.001
-    if (rand.nextFloat() <= 0.001) {
-      for (int[] child : children) {
-        int index1 = (int) (Math.random() * child.length);
-        int index2 = (int) (Math.random() * child.length);
-
-        int temp = child[index2];
-        child[index2] = child[index1];
-        child[index1] = temp;
-        tempChildren.add(child);
-      }
-      return tempChildren;
+      int temp = child[index2];
+      child[index2] = child[index1];
+      child[index1] = temp;
     }
-    return children;
   }
 
   /**
-   * Given two chromosomes, they are crossed over or cloned.
-   *
-   * @param children to be crossed over
-   * @return the crossed-over or cloned chromosomes
+   * Given two chromosomes, they are either crossed over or cloned.
+   * @param children
+   * @return children that crossover had been applied to
    */
-  private ArrayList<int[]> crossOver(ArrayList<int[]> children) {
-    Random rand = new Random();
-    ArrayList<int[]> tempChildren = new ArrayList<>();
+  private List<int[]> crossOver(List<int[]> children) {
 
-    // Apply crossover with probability of crossover = 0.7
-    if (rand.nextFloat() <= 0.7) {
-      for (int i = 0; i < 2; i++) {
-        Random r = new Random();
-        int start = r.nextInt(children.get(0).length);
-        int end = r.nextInt(children.get(0).length - start) + start + 1;
-        int[] newOffspringArray = Arrays.copyOfRange(children.get(i), start, end);
-        List<Integer> newOffspring = Arrays.stream(newOffspringArray).boxed().collect(Collectors.toList());
+    List<int[]> tempChildren = new ArrayList<>();
 
-        for (int temp : children.get(1)) {
-          if (!newOffspring.contains(temp)) {
-            newOffspring.add(temp);
-          }
+    for (int child = 0; child < 2; child++) {
+      Random r = new Random();
+      int start = r.nextInt(children.get(0).length);
+      int end = r.nextInt(children.get(0).length - start) + start + 1;
+
+      List<Integer> newOffSpring = Arrays.stream(Arrays.copyOfRange(children.get(0), start, end)).boxed().collect(Collectors.toList());
+
+      for (int gene : children.get(1)) {
+        if (!newOffSpring.contains(gene)) {
+          newOffSpring.add(gene);
         }
-
-        tempChildren.add(newOffspring.stream().mapToInt(j -> j).toArray());
       }
-      return tempChildren;
+      tempChildren.add(newOffSpring.stream().mapToInt(j -> (int) j).toArray());
     }
 
-    // If crossover did not occur, return the children as is (ie "cloned")
-    return children;
+    return tempChildren;
   }
 
   /**
-   * Given the fitness of a generation, selects the fittest chromosome.
-   *
+   * Given the fitness of a generation, selects the fittest chromosome/child.
    * @param fitness values calculated previously to be compared
    * @param indices the Stack in which we add fittest indices in order
    * @param generation the current generation
    * @return the fittest chromosome
    */
-  private int[] selection(ArrayList<Double> fitness, Stack<Integer> indices, int[][] generation) {
+  private int[] selection(List<Double> fitness, Stack<Integer> indices, int[][] generation) {
     double maxProbability = Collections.max(fitness);
     int indexMax = fitness.indexOf(maxProbability);
 
@@ -186,13 +171,12 @@ public class GeneticAlgorithm {
 
   /**
    * Calculates the fitness of each chromosome in a generation.
-   *
    * @param generation the set of chromosomes
    * @param pd the given distance data
    * @param currentGen the current generation
-   * @return the fitness of each chromosome in the given generation
+   * @return an array with the fitness of each chromosome/child in the given generation
    */
-  private double[] getFitness(int[][] generation, TSPData pd, int currentGen) {
+  private List<Double> getFitness(int[][] generation, TSPData pd, int currentGen) {
     double[] fitnessOfGeneration = new double[popSize];
     int[] startDistances = pd.getStartDistances();
     int[] endDistances = pd.getEndDistances();
@@ -222,17 +206,9 @@ public class GeneticAlgorithm {
       fitnessOfGeneration[i] = (1 / (Math.pow(sum, 8) + 1)) * Math.pow(10, currentGen);
     }
 
-    double sumFitness = 0.0;
+    double sumFitness = Arrays.stream(fitnessOfGeneration).sum();
 
-    for (double item : fitnessOfGeneration) {
-      sumFitness += item;
-    }
-
-    for (int i = 0; i < fitnessOfGeneration.length; i++) {
-      fitnessOfGeneration[i] = (fitnessOfGeneration[i] / sumFitness);
-    }
-
-    return fitnessOfGeneration;
+    return Arrays.stream(fitnessOfGeneration).map(n -> n/sumFitness).boxed().collect(Collectors.toList());
   }
 
 
@@ -251,6 +227,6 @@ public class GeneticAlgorithm {
 
     //run optimzation and write to file
     int[] solution = ga.solveTSP(tspData);
-    tspData.writeActionFile(solution, "./Assignment2/Swarm Intelligence/data/TSP solution.txt");
+    tspData.writeActionFile(solution, "./data/TSP solution.txt");
   }
 }
