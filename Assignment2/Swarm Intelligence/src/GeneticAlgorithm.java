@@ -67,13 +67,12 @@ public class GeneticAlgorithm {
       List<Double> fitness = getFitness(initGeneration, pd, currentGen);
       List<Double> tempFitness = getFitness(initGeneration, pd, currentGen);
 
-      // 3) Select the best (highest fitness) children via selection
+      // 3) Selection based on Roulette Wheel Selection
       Stack<Integer> indicesMaxFitness = new Stack<>();
 
       for (int i = 0; i < fitness.size(); i += 2) {
         List<int[]> children = new ArrayList<>();
 
-        // Get two children with current highest fitness probabilities
         int[] child1 = selection(tempFitness, indicesMaxFitness, initGeneration);
         int[] child2 = selection(tempFitness, indicesMaxFitness, initGeneration);
 
@@ -151,21 +150,26 @@ public class GeneticAlgorithm {
   }
 
   /**
-   * Given the fitness of a generation, selects the fittest chromosome/child.
+   * Given the fitness of a generation, selects a chromosome.
    * @param fitness values calculated previously to be compared
-   * @param indices the Stack in which we add fittest indices in order
+   * @param indices the Stack in which we add indices in order of selected
    * @param generation the current generation
    * @return the fittest chromosome
    */
   private int[] selection(List<Double> fitness, Stack<Integer> indices, int[][] generation) {
-    double maxProbability = Collections.max(fitness);
+    Random rand = new Random();
+    double selectionValue = rand.nextDouble();
+    double partialSum = fitness.get(0);
+    int index = 0;
 
-    int indexMax = fitness.indexOf(maxProbability);
+    while (partialSum < selectionValue) {
+      partialSum += fitness.get(index + 1);
+      index += 1;
+    }
 
-    fitness.remove(indexMax);
-    indices.push(indexMax);
+    indices.push(index);
 
-    return generation[indexMax];
+    return generation[index];
   }
 
   /**
