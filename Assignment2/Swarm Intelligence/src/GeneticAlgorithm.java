@@ -1,5 +1,3 @@
-import javafx.util.Pair;
-import sun.security.util.ArrayUtil;
 
 import java.io.IOException;
 import java.util.*;
@@ -101,7 +99,7 @@ public class GeneticAlgorithm {
     }
 
     // 6) Repeat step 2 - 5 until max number of generations is reached
-    // 7) Select the fitess child of the last generation
+    // 7) Select the fitness child of the last generation
     List<Double> fitness = getFitness(initGeneration, pd, currentGen);
 
     double maxProbability = Collections.max(fitness);
@@ -161,6 +159,7 @@ public class GeneticAlgorithm {
    */
   private int[] selection(List<Double> fitness, Stack<Integer> indices, int[][] generation) {
     double maxProbability = Collections.max(fitness);
+
     int indexMax = fitness.indexOf(maxProbability);
 
     fitness.remove(indexMax);
@@ -202,12 +201,12 @@ public class GeneticAlgorithm {
       }
 
       // Add all of the distances between the first and last element as well as the start and finish distances.
-      sum = sum + end + start;
-      fitnessOfGeneration[i] = (1 / (Math.pow(sum, 8) + 1)) * Math.pow(10, currentGen);
+      fitnessOfGeneration[i] = sum + end + start;
     }
 
     double sumFitness = Arrays.stream(fitnessOfGeneration).sum();
 
+    // Since shorter distance = greater fitness, it's individual/total inverted (or total/individual)
     return Arrays.stream(fitnessOfGeneration).map(n -> n/sumFitness).boxed().collect(Collectors.toList());
   }
 
