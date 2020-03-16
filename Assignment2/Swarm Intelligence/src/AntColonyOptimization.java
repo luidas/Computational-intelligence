@@ -1,4 +1,7 @@
+import sun.awt.image.VolatileSurfaceManager;
+
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 
 /**
  * Class representing the first assignment. Finds shortest path between two points in a maze according to a specific
@@ -30,12 +33,36 @@ public class AntColonyOptimization {
 
     /**
      * Loop that starts the shortest path process
-     * @param spec Spefication of the route we wish to optimize
+     * @param spec specification of the route we wish to optimize
      * @return ACO optimized route
      */
     public Route findShortestRoute(PathSpecification spec) {
-        maze.reset();
-        return null;
+        Route route = new Route(spec.getStart());
+
+        //For loop for every Generations
+        for(int gen = 1; gen <= generations; gen++){
+            //All ants stored in ArrayList so this way they don't learn from each other in the same run.
+            ArrayList<Route> routes = new ArrayList<>();
+
+            //For loop for every ants per generation.
+            for(int ant = 1; ant <= antsPerGen; ant++){
+                Ant newAnt = new Ant(maze, spec);
+                Route temp = newAnt.findRoute();
+                routes.add(temp);
+
+                //This if statement is used to always keep the smallest route. However we don't know if
+                //this is alright for the ACO optimization --> the slides ask for the very last ant.
+                if(temp.size() < route.size() || route.size() == 0){
+                    route = temp;
+                }
+            }
+
+            //It evaporate the pheromones FOR EVERY cell in the 2D array.
+            maze.evaporate(evaporation);
+            maze.addPheromoneRoutes(routes, Q);
+        }
+
+        return route;
     }
 
     /**
@@ -43,28 +70,28 @@ public class AntColonyOptimization {
      */
     public static void main(String[] args) throws FileNotFoundException {
     	//parameters
-    	int gen = 1;
+    	int gen = 10;
         int noGen = 1;
         double Q = 1600;
         double evap = 0.1;
         
         //construct the optimization objects
-        Maze maze = Maze.createMaze("./data/hard maze.txt");
-        PathSpecification spec = PathSpecification.readCoordinates("./data/hard coordinates.txt");
+        Maze maze = Maze.createMaze("./data/insane maze.txt");
+        PathSpecification spec = PathSpecification.readCoordinates("./data/insane coordinates.txt");
         AntColonyOptimization aco = new AntColonyOptimization(maze, gen, noGen, Q, evap);
         
         //save starting time
         long startTime = System.currentTimeMillis();
-        
-        //run optimization
+
+        //run optimization --> Everything starts with this method.
         Route shortestRoute = aco.findShortestRoute(spec);
-        
+
         //print time taken
         System.out.println("Time taken: " + ((System.currentTimeMillis() - startTime) / 1000.0));
         
         //save solution
-        shortestRoute.writeToFile("./data/hard_solution.txt");
-        
+        shortestRoute.writeToFile("./data/insane.txt");
+
         //print route size
         System.out.println("Route size: " + shortestRoute.size());
     }
