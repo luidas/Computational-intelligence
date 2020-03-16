@@ -14,8 +14,6 @@ public class Maze {
     private int length;
     private int[][] walls;
     private double[][] pheromones;
-    private Coordinate start;
-    private Coordinate end;
 
     /**
      * Constructor of a maze
@@ -35,8 +33,11 @@ public class Maze {
      */
     private void initializePheromones() {
         double[][] pher = new double[getWidth()][getLength()];
-        for(double[] a : pher){
-            Arrays.fill(a, 1);
+        for(int y = 0; y < length; y++){
+            for(int x = 0; x < width; x++){
+                if(walls[x][y] == 0) pher[x][y] = 0;
+                else pher[x][y] = 1;
+            }
         }
         this.pheromones = pher;
     }
@@ -79,9 +80,8 @@ public class Maze {
      * @param rho evaporation factor
      */
     public void evaporate(double rho) {
-        for(int i = 0; i < pheromones.length; i++){
-            double[] pher = pheromones[i];
-            for(int j = 0; j < pher.length; j++){
+        for(int i = 0; i < width; i++){
+            for(int j = 0; j < length; j++){
                 pheromones[i][j] = (1 - rho) * pheromones[i][j];
             }
         }
