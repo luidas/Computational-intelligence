@@ -3,10 +3,17 @@ import numpy as np
 
 
 def main():
-    p1 = p.Perceptron(num_inputs=4, bias=-1.5, )
-    input_data = np.array([(0, 0), (0, 1), (1, 0), (1, 1)])
+    perceptron = p.Perceptron(num_inputs=2)
 
-    # print(p1.activation_func(input_data))
+    # Inputs + labels for AND
+    training_inputs = np.array([[1, 1], [1, 0], [0, 1], [0, 0]])
+    labels = np.array([1, 0, 0, 0])
+
+    perceptron.train(training_inputs, labels)
+
+    # Test AND gate
+    inputs = np.array([1, 1])
+    print(perceptron.prediction(inputs))
 
 
 if __name__ == "__main__":
