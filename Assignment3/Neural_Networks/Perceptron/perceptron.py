@@ -6,9 +6,9 @@ class Perceptron:
 
     # Constructor to create new Perceptron object
     # Epochs is the number of times the learning algorithm will run before stopping
-    def __init__(self, num_inputs, learning_rate=0.01, epochs=100):
+    def __init__(self, num_inputs, num_perceptrons_in_layer, learning_rate=0.01, epochs=100):
         # We might want to change the initialisation of the weights here, something to consider
-        self.weights = np.random.random(num_inputs + 1)
+        self.weights = np.random.random(num_inputs + 1, num_perceptrons_in_layer + 1)
         self.learning_rate = learning_rate
         self.epochs = epochs
 

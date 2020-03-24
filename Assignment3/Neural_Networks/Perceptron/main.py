@@ -4,7 +4,7 @@ import csv
 
 
 def main():
-    perceptron = p.Perceptron(num_inputs=2)
+    perceptron = p.Perceptron(num_inputs=2, num_perceptrons_in_layer=3)
 
     # Inputs + labels for AND
     training_inputs_AND = np.array([[1, 1], [1, 0], [0, 1], [0, 0]])
@@ -34,3 +34,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
