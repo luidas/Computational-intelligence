@@ -11,6 +11,8 @@ def main():
 
     perceptron = p.Perceptron(features_training, targets_training)
 
+    perceptron.train()
+
 if __name__ == "__main__":
     main()
 
