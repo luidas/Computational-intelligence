@@ -23,7 +23,9 @@ class Perceptron:
             self.feedForward(row)
             # I don't know if I have to set output back to 0s every time
 
-            if (np.rint(self.output) == self.toVector(targets_test[i] - 1)).all():
+            max = np.max(self.output)
+            rounded = np.where(self.output == max, 1, 0)
+            if (rounded == self.toVector(targets_test[i] - 1)).all():
                 correct = correct + 1
 
             self.output = np.zeros((7, 1))
