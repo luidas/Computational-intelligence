@@ -5,7 +5,7 @@ import csv
 
 def main():
     features_file = np.genfromtxt( '../features.txt', delimiter = ',' )
-    targets_file = np.genfromtxt( '../targets.txt', delimiter = ',' )
+    targets_file = np.genfromtxt( '../targets.txt', delimiter = '' )
     features_training, features_testing = features_file[:5890], features_file[5890:]
     targets_training, targets_testing = targets_file[:5890], targets_file[5890:]
 
