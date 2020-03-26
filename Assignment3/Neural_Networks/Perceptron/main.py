@@ -10,8 +10,8 @@ def main():
     targets_training, targets_testing = targets_file[:5890], targets_file[5890:]
 
     perceptron = p.Perceptron(features_training, targets_training)
-
     perceptron.train()
+    perceptron.test(features_testing, targets_testing)
 
 if __name__ == "__main__":
     main()

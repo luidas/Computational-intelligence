@@ -5,7 +5,7 @@ class Perceptron:
 
     # Constructor to create new Perceptron object
     # Epochs is the number of times the learning algorithm will run before stopping
-    def __init__(self, features_training, targets_training, learning_rate=0.01, epochs=10):
+    def __init__(self, features_training, targets_training, learning_rate=0.01, epochs=100):
         # We might want to change the initialisation of the weights here, something to consider
         self.input = features_training
         self.targets = targets_training
@@ -17,14 +17,29 @@ class Perceptron:
         self.epochs = epochs
         self.output = np.zeros((7, 1))
 
+    def test(self, features_test, targets_test):
+        correct = 0
+        for i, row in enumerate(features_test):
+            self.feedForward(row)
+            # I don't know if I have to set output back to 0s every time
+
+            if (np.rint(self.output) == self.toVector(targets_test[i] - 1)).all():
+                correct = correct + 1
+
+            self.output = np.zeros((7, 1))
+
+        print("Accuracy: ", correct / len(features_test))
+
     # Train the perceptron for at least epoch times, update the weights accordingly
     def train(self):
-        for _ in range(self.epochs):
-            tot_error = 0
-
+        for j in range(self.epochs):
             for i, row in enumerate(self.input):
                 self.feedForward(row)
                 self.backprop(row, self.toVector(self.targets[i] - 1))
+
+                # I don't know if I have to set output back to 0s every time
+                self.output = np.zeros((7, 1))
+
             # csvFile.append(str(tot_error))
 
     def feedForward(self, row):
