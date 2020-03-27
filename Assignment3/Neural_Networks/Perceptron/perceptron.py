@@ -27,5 +27,5 @@ class Perceptron:
                 tot_error += (label - y_hat)
                 # Update the weights and bias accordingly
                 self.weights[1:] += self.learning_rate * (label - y_hat) * inputs
-                self.weights[0] += self.learning_rate * (label - y_hat)
+                #self.weights[0] += self.learning_rate * (label - y_hat)
             csvFile.append(str(tot_error))

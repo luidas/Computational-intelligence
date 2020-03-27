@@ -1,6 +1,5 @@
 import perceptron as p
 import numpy as np
-import csv
 
 
 def main():
@@ -18,9 +17,9 @@ def main():
     training_inputs_XOR = np.array([[1, 1], [1, 0], [0, 1], [0, 0]])
     labels_XOR = np.array([0, 1, 1, 0])
 
-    csvFile = []
+    csvFile = ["outputs"]
 
-    perceptron.train(training_inputs_OR, labels_OR, csvFile)
+    perceptron.train(training_inputs_XOR, labels_XOR, csvFile)
 
     with open('data.csv', 'w') as file:
         for line in csvFile:
@@ -28,8 +27,8 @@ def main():
             file.write("\n")
 
     # Test AND gate
-    inputs = np.array([1, 0])
-    print(perceptron.prediction(inputs))
+    #inputs = np.array([1, 0])
+    #print(perceptron.prediction(inputs))
 
 
 if __name__ == "__main__":
