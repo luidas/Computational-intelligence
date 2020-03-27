@@ -8,8 +8,8 @@ class Perceptron:
     # Epochs is the number of times the learning algorithm will run before stopping
     def __init__(self, num_inputs, learning_rate=0.01, epochs=100):
         # We might want to change the initialisation of the weights here, something to consider
-        self.weights = np.random.random(num_inputs)
-        self.weights = np.append(self.weights, 1)
+        self.weights = np.zeros(num_inputs + 1)
+        # self.weights = np.append(self.weights, 0)
         self.learning_rate = learning_rate
         self.epochs = epochs
 

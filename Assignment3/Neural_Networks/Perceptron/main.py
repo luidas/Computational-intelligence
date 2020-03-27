@@ -19,7 +19,7 @@ def main():
 
     csvFile = ["outputs"]
 
-    perceptron.train(training_inputs_OR, labels_OR, csvFile)
+    perceptron.train(training_inputs_AND, labels_AND, csvFile)
 
     with open('data.csv', 'w') as file:
         for line in csvFile:
@@ -27,8 +27,8 @@ def main():
             file.write("\n")
 
     # Test AND gate
-    # inputs = np.array([1, 0])
-    # print(perceptron.prediction(inputs))
+    inputs = np.array([0, 0])
+    print(perceptron.prediction(inputs))
 
 
 if __name__ == "__main__":
