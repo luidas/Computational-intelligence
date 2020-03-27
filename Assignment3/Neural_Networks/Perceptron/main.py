@@ -20,7 +20,7 @@ def main():
 
     csvFile = []
 
-    perceptron.train(training_inputs_XOR, labels_XOR, csvFile)
+    perceptron.train(training_inputs_OR, labels_OR, csvFile)
 
     with open('data.csv', 'w') as file:
         for line in csvFile:
