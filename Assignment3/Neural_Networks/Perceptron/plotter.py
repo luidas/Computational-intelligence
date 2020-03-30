@@ -3,11 +3,11 @@ import plotly.graph_objects as go
 
 step = 10
 df1 = pd.read_csv('accuracy.csv')
-df = df1.groupby(df1.index // step).mean().to_frame()
+df = df1.groupby(df1.index // step).mean()
 
 fig = go.Figure()
 
-fig.add_trace(go.Scatter(x=df['Accuracy'], y=df['Neurons']))
+fig.add_trace(go.Scatter(x=df['Neurons'], y=df['Accuracy']))
 
 
 # Update Random walks to: Random Walks QLearning/Random Toy/Simple-maze
