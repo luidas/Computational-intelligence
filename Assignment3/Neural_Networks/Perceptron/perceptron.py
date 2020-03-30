@@ -5,13 +5,14 @@ class Perceptron:
 
     # Constructor to create new Perceptron object
     # Epochs is the number of times the learning algorithm will run before stopping
-    def __init__(self, features_training, targets_training, learning_rate=0.01, epochs=100):
+    def __init__(self, features_training, targets_training, neurons, learning_rate=0.01, epochs=30):
         # We might want to change the initialisation of the weights here, something to consider
         self.input = features_training
         self.targets = targets_training
-        self.inputWeight = np.random.uniform(low=-2.4 / 25, high=2.4 / 25, size=(10, 8))
-        self.hiddenWeight = np.random.uniform(low=-2.4 / 25, high=2.4 / 25, size=(8, 7))
-        self.biasInput = np.random.uniform(low=-2.4 / 25, high=2.4 / 25, size=(1, 8))
+        self.neurons = neurons
+        self.inputWeight = np.random.uniform(low=-2.4 / 25, high=2.4 / 25, size=(10, self.neurons))
+        self.hiddenWeight = np.random.uniform(low=-2.4 / 25, high=2.4 / 25, size=(self.neurons, 7))
+        self.biasInput = np.random.uniform(low=-2.4 / 25, high=2.4 / 25, size=(1, self.neurons))
         self.biasHidden = np.random.uniform(low=-2.4 / 25, high=2.4 / 25, size=(1, 7))
         self.learning_rate = learning_rate
         self.epochs = epochs
@@ -19,9 +20,10 @@ class Perceptron:
 
     def test(self, features_test, targets_test):
         correct = 0
+        length = len(features_test)
+
         for i, row in enumerate(features_test):
             self.feedForward(row)
-            # I don't know if I have to set output back to 0s every time
 
             max = np.max(self.output)
             rounded = np.where(self.output == max, 1, 0)
@@ -30,7 +32,15 @@ class Perceptron:
 
             self.output = np.zeros((7, 1))
 
-        print("Accuracy: ", correct / len(features_test))
+        accuracy = float(correct) / float(length)
+
+        with open('accuracy.csv', 'a') as csvFile:
+            csvFile.write(str(accuracy))
+            csvFile.write(", ")
+            csvFile.write(str(self.neurons))
+            csvFile.write('\n')
+
+        print("Accuracy: ", float(correct) / float(length))
 
     # Train the perceptron for at least epoch times, update the weights accordingly
     def train(self):

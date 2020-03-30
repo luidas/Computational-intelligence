@@ -1,16 +1,17 @@
 import pandas as pd
 import plotly.graph_objects as go
 
-df1 = pd.read_csv('C:\\Users\\Jbies\\OneDrive\\CSE\\CSE_Y2.2\\Q3\\Computational intelligent\\group-50\\plots\\adaptive_epsilon+gamma=0.1 0.csv')
-
+step = 10
+df1 = pd.read_csv('accuracy.csv')
+df = df1.groupby(df1.index // step).mean().to_frame()
 
 fig = go.Figure()
 
-fig.add_trace(go.Scatter(y = df1['avg']))
+fig.add_trace(go.Scatter(x=df['Accuracy'], y=df['Neurons']))
 
 
 # Update Random walks to: Random Walks QLearning/Random Toy/Simple-maze
-fig.update_layout(title='adaptive_epsilon+gamma=0.1',
+fig.update_layout(title='Accuracy versus Number of Neurons in Hidden Layer',
                    plot_bgcolor='rgb(230, 230,230)')
 
 fig.show()
