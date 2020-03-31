@@ -25,8 +25,8 @@ class Perceptron:
         for i, row in enumerate(features_test):
             self.feedForward(row)
 
-            max = np.max(self.output)
-            rounded = np.where(self.output == max, 1, 0)
+            max_output = np.max(self.output)
+            rounded = np.where(self.output == max_output, 1, 0)
             if (rounded == self.toVector(targets_test[i] - 1)).all():
                 correct = correct + 1
 
