@@ -1,11 +1,12 @@
 import perceptron as p
 import numpy as np
-from Assignment3.Neural_Networks.Perceptron.cross_validation import *
+from Neural_Networks.Perceptron.cross_validation import *
 
 
 def main():
     features_file = np.genfromtxt('../features.txt', delimiter=',')
     targets_file = np.genfromtxt('../targets.txt', delimiter='')
+    unknown_set = np.genfromtxt('../unknown.txt', delimiter=',')
 
     param_features = get_validation(features_file)
     param_targets = get_validation(targets_file)
@@ -13,20 +14,21 @@ def main():
     cv_features = create_validation(features_file)
     cv_targets = create_validation(targets_file)
 
-    for i in range(10):
-        test_set_length = get_length(cv_targets)
+    #for i in range(10):
+    test_set_length = get_length(cv_targets)
 
-        features_testing = create_test(file=cv_features, l=test_set_length, i=i)
-        targets_testing = create_test(file=cv_targets, l=test_set_length, i=i)
+    #features_testing = create_test(file=cv_features, l=test_set_length, i=i)
+    #targets_testing = create_test(file=cv_targets, l=test_set_length, i=i)
 
-        features_training = create_training(file=cv_features, l=test_set_length, i=i)
-        targets_training = create_training(file=cv_targets, l=test_set_length, i=i)
+    #features_training = create_training(file=cv_features, l=test_set_length, i=i)
+    #targets_training = create_training(file=cv_targets, l=test_set_length, i=i)
 
-        neurons = 30
+    neurons = 30
 
-        perceptron = p.Perceptron(features_training=features_training, targets_training=targets_training, neurons=neurons)
-        perceptron.train()
-        perceptron.test(features_test=features_testing, targets_test=targets_testing)
+    perceptron = p.Perceptron(features_training=features_file, targets_training=targets_file, neurons=neurons)
+    perceptron.train()
+    #perceptron.test(features_test=features_testing, targets_test=targets_testing)
+    perceptron.evaluate_set(unknown_set)
 
 
 if __name__ == "__main__":

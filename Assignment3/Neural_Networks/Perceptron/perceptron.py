@@ -83,3 +83,18 @@ class Perceptron:
         zeroes = np.zeros(7)
         zeroes[int(target)] = 1
         return zeroes
+
+    def evaluate_set(self, set):
+
+        with open("Group_50_classes.txt", "a") as file:
+
+            for i, row in enumerate(set):
+                self.feedForward(row)
+                max_output = np.max(self.output)
+                rounded = np.where(self.output == max_output, 1, 0)
+
+                file.write(str(np.where(rounded == 1)[1][0] + 1))
+                file.write(",")
+
+
+                self.output = np.zeros((7, 1))
