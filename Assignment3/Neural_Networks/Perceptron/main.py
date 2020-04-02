@@ -30,11 +30,10 @@ def main():
     #     features_training = create_training(file=cv_features, l=test_set_length, i=i)
     #     targets_training = create_training(file=cv_targets, l=test_set_length, i=i)
     #
-    #     neurons = 30
-    #
-    #     perceptron = p.Perceptron(features_training=features_training, targets_training=targets_training, neurons=neurons)
-    #     perceptron.train()
-    #     perceptron.test(features_test=features_testing, targets_test=targets_testing)
+    neurons = 30
+    perceptron = p.Perceptron(features_training=features_training, targets_training=targets_training, neurons=neurons)
+    perceptron.train()
+    perceptron.test(features_test=features_testing, targets_test=targets_testing)
 
 
 if __name__ == "__main__":
