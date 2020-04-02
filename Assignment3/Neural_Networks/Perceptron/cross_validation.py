@@ -1,3 +1,6 @@
+import numpy as np
+
+
 # Set one part aside for parameter tuning
 def get_validation(file):
     return file[0:int(len(file) * 0.1)]
@@ -15,7 +18,7 @@ def create_test(file, l, i):
 
 # Create training set
 def create_training(file, l, i):
-    return file[((i * l) + l): file.size]
+    return np.append(file[0:(i * l)], file[((i * l) + l): len(file)], axis=0)
 
 
 # Get length test set

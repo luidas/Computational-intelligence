@@ -1,11 +1,10 @@
 import perceptron as p
 import numpy as np
-import cross_validation as cv
-
 
 def main():
     features_file = np.genfromtxt('../features.txt', delimiter=',')
     targets_file = np.genfromtxt('../targets.txt', delimiter='')
+
 
     # however this is what Liudas first initiated, so something like 75 - 15 - 10?
     # but we have to write this in the report - in the code we are using the ..._testing as validation

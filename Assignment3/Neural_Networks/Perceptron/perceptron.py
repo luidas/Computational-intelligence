@@ -32,7 +32,7 @@ class Perceptron:
 
             self.output = np.zeros((7, 1))
 
-        accuracy = float(correct) / float(length)
+        accuracy = correct / length
 
         with open('accuracy.csv', 'a') as csvFile:
             csvFile.write(str(accuracy))
@@ -40,7 +40,7 @@ class Perceptron:
             csvFile.write(str(self.neurons))
             csvFile.write('\n')
 
-        print("Accuracy: ", float(correct) / float(length))
+        print("Accuracy: ", correct / length)
 
     # Train the perceptron for at least epoch times, update the weights accordingly
     def train(self):
