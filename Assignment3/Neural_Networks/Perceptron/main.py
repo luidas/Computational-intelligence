@@ -10,9 +10,6 @@ def main():
     targets_file = np.genfromtxt('../targets.txt', delimiter='')
 
 
-    # however this is what Liudas first initiated, so something like 75 - 15 - 10?
-    # but we have to write this in the report - in the code we are using the ..._testing as validation
-    # these comments needed to be deleted afterwards
     features_training, features_validation, features_testing = \
         features_file[:5890], features_file[5890:7068], features_file[7068:]
     targets_training, targets_validation, targets_testing = \

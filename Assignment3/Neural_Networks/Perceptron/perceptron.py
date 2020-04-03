@@ -76,9 +76,11 @@ class Perceptron:
         f = self.sigmoid(z)
         return f * (1 - f)
 
+    # Added as an optimization
     def tanh(self, z):
         return (np.exp(z) - np.exp(-z)) / (np.exp(z) + np.exp(-z))
 
+    # Added as an optimization
     def tanh_derivative(self, z):
         f = self.tanh(z)
         return 1 - f**2
