@@ -1,7 +1,6 @@
 import Assignment3.Neural_Networks.SinglePerceptron.singleperceptron as p
 import numpy as np
 
-
 def main():
     # Create a perceptron
     perceptron = p.SinglePerceptron(num_inputs=2)
@@ -23,11 +22,6 @@ def main():
 
     # Train the single perceptron
     perceptron.train(training_inputs_AND, labels_AND, csvFile)
-
-    with open('data.csv', 'w') as file:
-        for line in csvFile:
-            file.write(line)
-            file.write("\n")
 
     # Test AND gate
     inputs = np.array([0, 0])

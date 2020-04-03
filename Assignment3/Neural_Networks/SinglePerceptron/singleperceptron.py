@@ -1,6 +1,5 @@
 import numpy as np
 
-
 # Create new class SinglePerceptron
 class SinglePerceptron:
 
@@ -28,3 +27,4 @@ class SinglePerceptron:
                 self.weights[1:] += self.learning_rate * (label - y_hat) * inputs
                 self.weights[0] += self.learning_rate * (label - y_hat)
             csvFile.append(str(tot_error))
+
