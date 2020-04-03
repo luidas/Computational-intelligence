@@ -9,10 +9,10 @@ class Perceptron:
         self.input = features_training
         self.targets = targets_training
         self.neurons = neurons
-        self.inputWeight = np.random.uniform(low=-2.4 / 47, high=2.4 / 47, size=(10, self.neurons))
-        self.hiddenWeight = np.random.uniform(low=-2.4 / 47, high=2.4 / 47, size=(self.neurons, 7))
-        self.biasInput = np.random.uniform(low=-2.4 / 47, high=2.4 / 47, size=(1, self.neurons))
-        self.biasHidden = np.random.uniform(low=-2.4 / 47, high=2.4 / 47, size=(1, 7))
+        self.inputWeight = np.random.uniform(low=-2.4 / 42, high=2.4 / 42, size=(10, self.neurons))
+        self.hiddenWeight = np.random.uniform(low=-2.4 / 42, high=2.4 / 42, size=(self.neurons, 7))
+        self.biasInput = np.random.uniform(low=-2.4 / 42, high=2.4 / 42, size=(1, self.neurons))
+        self.biasHidden = np.random.uniform(low=-2.4 / 42, high=2.4 / 42, size=(1, 7))
         self.learning_rate = learning_rate
         self.epochs = epochs
         self.output = np.zeros((7, 1))
@@ -53,16 +53,16 @@ class Perceptron:
 
     def feedForward(self, row):
         # Process for the input to hidden layer
-        self.inputToHidden = self.sigmoid(row.dot(self.inputWeight) - self.biasInput)
+        self.inputToHidden = self.tanh(row.dot(self.inputWeight) - self.biasInput)
         # Process for the hidden to output layer
-        self.output = self.sigmoid(self.inputToHidden.dot(self.hiddenWeight) - self.biasHidden)
+        self.output = self.tanh(self.inputToHidden.dot(self.hiddenWeight) - self.biasHidden)
 
     def backprop(self, row, target):
         # Array of errors (difference between expected output, and predicted one)
-        error_output = (target - self.output) * self.sigmoid_derivative(self.output)
+        error_output = (target - self.output) * self.tanh_derivative(self.output)
 
         # Array of errors being back propagated from the output layer
-        error_hidden = error_output.dot(self.hiddenWeight.T) * self.sigmoid_derivative(self.inputToHidden)
+        error_hidden = error_output.dot(self.hiddenWeight.T) * self.tanh_derivative(self.inputToHidden)
 
         # update the weights with the derivative (slope) of the loss function
         self.hiddenWeight += self.learning_rate * (self.inputToHidden.T.dot(error_output))
@@ -75,6 +75,13 @@ class Perceptron:
     def sigmoid_derivative(self, z):
         f = self.sigmoid(z)
         return f * (1 - f)
+
+    def tanh(self, z):
+        return (np.exp(z) - np.exp(-z)) / (np.exp(z) + np.exp(-z))
+
+    def tanh_derivative(self, z):
+        f = self.tanh(z)
+        return 1 - f**2
 
     # Sets the target to a vector of size 7, in order to subtract the predicted output from it
     def toVector(self, target):
