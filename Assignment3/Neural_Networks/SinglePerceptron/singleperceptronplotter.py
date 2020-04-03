@@ -7,7 +7,6 @@ fig = go.Figure()
 
 fig.add_trace(go.Scatter(y=df1["outputs"]))
 
-# Update Random walks to: Random Walks QLearning/Random Toy/Simple-maze
 fig.update_layout(title='AND - Single perceptron - learning',
                   xaxis_title='Epoch',
                   yaxis_title='Error',
