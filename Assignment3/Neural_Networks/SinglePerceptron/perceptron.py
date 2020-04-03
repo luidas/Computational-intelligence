@@ -1,10 +1,10 @@
 import numpy as np
 
 
-# Create new class Perceptron
-class Perceptron:
+# Create new class SinglePerceptron
+class SinglePerceptron:
 
-    # Constructor to create new Perceptron object
+    # Constructor to create new Single Perceptron object
     # Epochs is the number of times the learning algorithm will run before stopping
     def __init__(self, num_inputs, learning_rate=0.01, epochs=100):
         # We might want to change the initialisation of the weights here, something to consider

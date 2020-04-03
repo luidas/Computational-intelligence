@@ -3,7 +3,7 @@ import numpy as np
 
 
 def main():
-    perceptron = p.Perceptron(num_inputs=2)
+    perceptron = p.SinglePerceptron(num_inputs=2)
 
     # Inputs + labels for AND
     training_inputs_AND = np.array([[1, 1], [1, 0], [0, 1], [0, 0]])
